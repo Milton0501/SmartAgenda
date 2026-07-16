@@ -16,7 +16,7 @@ Sistema de gestión de tareas diseñado para el usuario final, enfocado en la or
 🛠️ Cómo empezar
 1. Clona el repositorio:
    `git clone https://github.com/Milton0501/SmartAgenda.git`
-2. Configura tus variables de entorno (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`) para conectar con tu base de datos local.
+2. Configura tus variables de entorno (`PORT`, `DB_PASSWORD`) para conectar con tu base de datos local.
 3. Ejecuta la aplicación usando Maven.
 
 ---
