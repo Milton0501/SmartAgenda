@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMARTAGENDA | Agenda Inteligente</title>
+    <!-- Cargamos Tailwind desde CDN para el MVP rápido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-slate-300 relative overflow-hidden">
+
+<!-- Efecto de luz de fondo (Brillo sutil) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] -z-10"></div>
+
+<div class="max-w-4xl mx-auto px-6 text-center z-10">
+
+    <!-- Hero Section -->
+    <h1 class="text-6xl md:text-7xl font-extrabold tracking-tight mb-4">
+        <span class="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">SMARTAGENDA</span>
+    </h1>
+    <p class="text-xl md:text-2xl font-semibold text-slate-100 mb-2">
+        El copiloto que prepara tu día.
+    </p>
+    <p class="text-lg text-slate-400 mb-12 max-w-2xl mx-auto">
+        No te limites a agendar tus compromisos de forma pasiva. Permite que nuestro motor de reglas analice tu contexto y organice tu preparación automáticamente.
+    </p>
+
+    <!-- Botón Brillante (Call to Action) -->
+    <div class="mb-16">
+        <a href="/agenda" class="relative inline-flex items-center justify-center px-10 py-5 font-bold text-white transition-all duration-300 bg-indigo-600 rounded-xl group hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 shadow-[0_0_20px_rgba(99,102,241,0.5)] hover:shadow-[0_0_35px_rgba(99,102,241,0.8)] hover:-translate-y-1">
+            <span class="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-teal-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+            <span class="relative flex items-center gap-3 text-lg">
+                    Empezar a organizar mi día
+                    <svg class="w-6 h-6 animate-pulse text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </span>
+        </a>
+    </div>
+
+    <!-- Beneficios Clave para el Usuario -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-8">
+        <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
+            <div class="text-3xl mb-3">🤖</div>
+            <h3 class="text-lg font-bold text-slate-100 mb-2">Preparación Activa</h3>
+            <p class="text-sm text-slate-400">Tu copiloto calcula y genera automáticamente bloques de enfoque antes de tus compromisos más importantes.</p>
+        </div>
+
+        <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
+            <div class="text-3xl mb-3">⚡</div>
+            <h3 class="text-lg font-bold text-slate-100 mb-2 font-semibold">Enfoque Inmediato</h3>
+            <p class="text-sm text-slate-400">Sin distracciones ni registros lentos. Entra directo a organizar tus actividades en un entorno rápido y minimalista.</p>
+        </div>
+
+        <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
+            <div class="text-3xl mb-3">📅</div>
+            <h3 class="text-lg font-bold text-slate-100 mb-2">Control del Día</h3>
+            <p class="text-sm text-slate-400">Visualiza tu jornada completa en un timeline intuitivo y tacha tus tareas conforme las vayas completando.</p>
+        </div>
+    </div>
+
+</div>
+
+<footer class="absolute bottom-4 text-xs text-slate-500 font-medium">
+    MVP Presentado por Milton | 2026
+</footer>
+
+</body>
+</html>

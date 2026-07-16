@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMARTAGENDA | Mi Agenda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-300 relative overflow-x-hidden pb-12">
+
+<!-- Brillo de fondo decorativo -->
+<div class="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] -z-10"></div>
+<div class="absolute bottom-0 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] -z-10"></div>
+
+<!-- Barra de Navegación Superior -->
+<header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="/" class="text-2xl font-black tracking-wider bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">SMARTAGENDA</a>
+        <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span class="text-sm font-semibold text-slate-200" th:text="${usuario.nombre}">Usuario</span>
+            <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded border border-slate-700">Sesión Activa</span>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 mt-10">
+
+    <!-- Notificación Flotante de Tarea Creada (Flash Attribute) -->
+    <div th:if="${mensajeExito}" class="mb-6 p-4 bg-emerald-950/40 border border-emerald-500/50 rounded-2xl flex items-start gap-4 shadow-lg shadow-emerald-950/20 animate-fade-in-down">
+        <div class="text-2xl mt-1">✅</div>
+        <div>
+            <h4 class="font-bold text-emerald-300">¡Acción Exitosa!</h4>
+            <p class="text-sm text-emerald-400/90" th:text="${mensajeExito}"></p>
+        </div>
+    </div>
+
+    <!-- Notificación Flotante del Copiloto (Flash Attribute) -->
+    <div th:if="${companionAlert}" class="mb-8 p-4 bg-teal-950/40 border border-teal-500/50 rounded-2xl flex items-start gap-4 shadow-lg shadow-teal-950/20 animate-fade-in-down">
+        <div class="text-2xl mt-1">🤖</div>
+        <div>
+            <h4 class="font-bold text-teal-300">¡Copiloto Activado con Éxito!</h4>
+            <p class="text-sm text-teal-400/90" th:text="${companionAlert}"></p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- COLUMNA IZQUIERDA: Formulario de Nueva Tarea (4 Columnas) -->
+        <section class="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-3xl p-6 h-fit sticky top-24">
+            <h2 class="text-xl font-extrabold text-slate-100 mb-6 flex items-center gap-2">
+                <span>📅</span> Añadir Actividad
+            </h2>
+
+            <form th:action="@{/agenda/tasks}" method="POST" class="space-y-5">
+                <!-- Título -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Título de la Actividad</label>
+                    <input type="text" name="titulo" required placeholder="Ej. Exposición de Sistemas"
+                           class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors">
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Detalles / Contexto</label>
+                    <textarea name="descripcion" rows="3" placeholder="Añade detalles o notas adicionales..."
+                              class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"></textarea>
+                </div>
+
+                <!-- Tipo de Tarea (Detonador del Copiloto) -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Categoría (Tipo de Tarea)</label>
+                    <select name="tipoTarea" required
+                            class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="MECANICO" class="bg-slate-900">🛠️ Diagnóstico / Mecánica Automotriz</option>
+                        <option value="ESPOSICION" class="bg-slate-900">🎓 Presentación / Exposición Académica</option>
+                        <option value="OTROS" class="bg-slate-900">📝 Tareas de Rutina / Otros</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                        💡 Al seleccionar Mecánica o Exposición, tu copiloto SMARTAGENDA agendará automáticamente un bloque de preparación preventiva antes de tu cita.
+                    </p>
+                </div>
+
+                <!-- Hora de Inicio y Prioridad -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Hora Inicio</label>
+                        <input type="time" name="tiempoInicio" required
+                               class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Prioridad</label>
+                        <select name="prioridad" required
+                                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                            <option value="colorBajo" class="bg-slate-900">Baja</option>
+                            <option value="colorMedio" selected class="bg-slate-900">Media</option>
+                            <option value="colorFuerte" class="bg-slate-900">Alta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botón Enviar -->
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] transition-all text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-650/30 flex items-center justify-center gap-2">
+                    Agregar a la agenda
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+            </form>
+        </section>
+
+        <!-- COLUMNA DERECHA: Agenda / Timeline del Día (8 Columnas) -->
+        <section class="lg:col-span-8">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-100">Mi Jornada de Hoy</h2>
+                        <p class="text-sm text-slate-400 mt-1">Línea de tiempo de actividades organizadas cronológicamente</p>
+                    </div>
+                    <span class="text-xs font-semibold text-indigo-400 bg-indigo-950/60 px-3 py-1.5 rounded-full border border-indigo-800/50" th:text="${#temporals.format(#temporals.createNow(), 'dd MMMM, yyyy')}">Fecha</span>
+                </div>
+
+                <!-- Estado Vacío -->
+                <div th:if="${#lists.isEmpty(tasks)}" class="text-center py-16 border-2 border-dashed border-slate-800 rounded-2xl">
+                    <div class="text-5xl mb-4">✨</div>
+                    <h3 class="text-lg font-bold text-slate-300">No hay tareas programadas para hoy</h3>
+                    <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Agrega tu primer compromiso en el panel izquierdo para ver cómo actúa el copiloto proactivo.</p>
+                </div>
+
+                <!-- Contenedor del Timeline -->
+                <div th:unless="${#lists.isEmpty(tasks)}" class="relative pl-6 border-l-2 border-slate-800 space-y-6">
+
+                    <!-- Loop de Tareas con Bordes de Prioridad Dinámicos -->
+                    <div th:each="task : ${tasks}"
+                         th:classappend="${task.comparacionTarea} ? 'border border-teal-500/20 bg-teal-950/10 shadow-[0_0_15px_rgba(20,184,166,0.03)] border-l-4 border-l-teal-400' : (
+                                         task.prioridad == 'colorFuerte' ? 'border border-slate-800/80 bg-slate-900/40 border-l-4 border-l-rose-500' : (
+                                         task.prioridad == 'colorBajo' ? 'border border-slate-800/80 bg-slate-900/40 border-l-4 border-l-slate-600' :
+                                         'border border-slate-800/80 bg-slate-900/40 border-l-4 border-l-amber-500'
+                                        ))"
+                         class="relative p-5 rounded-2xl transition-all duration-300 hover:border-slate-700">
+
+                        <!-- Indicador de Punto en el Timeline -->
+                        <div th:classappend="${task.comparacionTarea} ? 'bg-teal-400 ring-4 ring-teal-950' : 'bg-slate-700 ring-4 ring-slate-950'"
+                             class="absolute -left-[31px] top-7 w-3.5 h-3.5 rounded-full"></div>
+
+                        <!-- Cabecera de la Tarea: Hora, Badges y Acciones -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg font-bold text-slate-100" th:text="${#temporals.format(task.tiempoInicio, 'hh:mm a')}">03:00 PM</span>
+
+                                <!-- Badge de Copiloto Inteligente -->
+                                <span th:if="${task.comparacionTarea}" class="text-[10px] bg-teal-950/80 text-teal-400 border border-teal-800 font-bold px-2.5 py-1 rounded-full flex items-center gap-1 animate-pulse">
+                                    🤖 COPILOTO SMARTAGENDA
+                                </span>
+                                <!-- Badge Normal -->
+                                <span th:unless="${task.comparacionTarea}" class="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 font-medium px-2.5 py-1 rounded-full" th:text="${task.tipoTarea.nombre}">
+                                    Categoría
+                                </span>
+                            </div>
+
+                            <!-- Botones de Acción (Completar / Eliminar) -->
+                            <div class="flex items-center gap-2">
+                                <!-- Checkbox Form -->
+                                <form th:action="@{/agenda/tasks/{id}/toggle(id=${task.id})}" method="POST" class="inline">
+                                    <button type="submit"
+                                            th:classappend="${task.completado} ? 'bg-emerald-600/30 border-emerald-500 text-emerald-400' : 'border-slate-700 text-slate-500 hover:border-slate-500'"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all">
+                                        <span th:text="${task.completado} ? '✓ Completado' : 'Pendiente'">Pendiente</span>
+                                    </button>
+                                </form>
+
+                                <!-- Eliminar Form -->
+                                <form th:action="@{/agenda/tasks/{id}/delete(id=${task.id})}" method="POST" class="inline"
+                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta actividad?');">
+                                    <button type="submit" class="p-2 border border-slate-800 text-slate-500 hover:text-rose-400 hover:border-rose-950/40 rounded-lg transition-all" title="Eliminar">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Título y Descripción -->
+                        <div class="pr-4">
+                            <h3 th:classappend="${task.completado} ? 'line-through text-slate-500 font-medium' : 'text-slate-100 font-bold'"
+                                class="text-base leading-tight" th:text="${task.titulo}">
+                                Título de la Actividad
+                            </h3>
+                            <p th:classappend="${task.completado} ? 'text-slate-600' : 'text-slate-400'"
+                               class="text-sm mt-2 leading-relaxed" th:text="${task.descripcion}">
+                                Descripción detallada de la tarea de preparación o rutina.
+                            </p>
+                        </div>
+
+                    </div> <!-- Fin Loop Tareas -->
+
+                </div> <!-- Fin Contenedor Timeline -->
+
+            </div>
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>
